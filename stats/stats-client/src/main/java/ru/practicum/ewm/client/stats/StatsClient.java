@@ -16,9 +16,9 @@ import java.util.List;
 public class StatsClient {
 
     private final WebClient webClient;
-    private final String SERVER_URL = "http://localhost:9090";
-    private final String HIT_ENDPOINT = "/hit";
-    private final String FIND_STATS_ENDPOINT = "/stats";
+    private static final String SERVER_URL = "http://localhost:9090";
+    private static final String HIT_ENDPOINT = "/hit";
+    private static final String FIND_STATS_ENDPOINT = "/stats";
 
     public StatsClient() {
         this.webClient = WebClient.create(SERVER_URL);
