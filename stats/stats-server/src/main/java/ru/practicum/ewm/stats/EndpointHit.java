@@ -12,6 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
@@ -25,18 +27,22 @@ public class EndpointHit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Integer id;
 
-    @Column(name = "app", nullable = false)
+    @NotBlank
+    @Column(name = "app")
     private String app;
 
-    @Column(name = "uri", nullable = false)
+    @NotBlank
+    @Column(name = "uri")
     private String uri;
 
-    @Column(name = "ip", nullable = false)
+    @NotBlank
+    @Column(name = "ip")
     private String ip;
 
-    @Column(name = "created_at", nullable = false)
+    @NotNull
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 }
