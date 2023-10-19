@@ -1,4 +1,4 @@
-package ru.practicum.model.user;
+package ru.practicum.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -22,20 +22,20 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @ToString
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "locations")
+public class Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
-    @NotBlank
-    @Column(name = "email")
-    private String email;
+    @NotNull
+    @Column(name = "lat")
+    private Double lat;
 
-    @NotBlank
-    @Column(name = "name")
-    private String name;
+    @NotNull
+    @Column(name = "lon")
+    private Double lon;
 
 }
