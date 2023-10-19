@@ -17,7 +17,7 @@ public interface StatisticRepository extends JpaRepository<EndpointHit, Integer>
             " AND e.uri IN :uris" +
             " AND (:unique = false OR e.ip IN (SELECT DISTINCT e2.ip FROM EndpointHit e2))" +
             " GROUP BY e.app, e.uri" +
-            " ORDER BY CASE WHEN :unique = true THEN 1 ELSE COUNT(e) END DESC")
+            " ORDER BY CASE WHEN :unique = true THEN COUNT(DISTINCT e) ELSE COUNT(e) END DESC")
     List<ViewStatsDto> findStatisticsByParametersWithUriFilter(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,
@@ -31,7 +31,7 @@ public interface StatisticRepository extends JpaRepository<EndpointHit, Integer>
             " WHERE e.createdAt BETWEEN :start AND :end" +
             " AND (:unique = false OR e.ip IN (SELECT DISTINCT e2.ip FROM EndpointHit e2))" +
             " GROUP BY e.app, e.uri" +
-            " ORDER BY CASE WHEN :unique = true THEN 1 ELSE COUNT(e) END DESC")
+            " ORDER BY CASE WHEN :unique = true THEN COUNT(DISTINCT e) ELSE COUNT(e) END DESC")
     List<ViewStatsDto> findStatisticsByParametersWithoutUriFilter(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,
