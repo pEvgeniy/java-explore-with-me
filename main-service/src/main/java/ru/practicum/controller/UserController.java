@@ -1,4 +1,4 @@
-package ru.practicum.controller.user;
+package ru.practicum.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +28,8 @@ public class UserController {
 
     @GetMapping
     public List<UserDto> findAllUsersWithParameters(@RequestParam List<Integer> ids,
-                                                    @RequestParam Integer from,
-                                                    @RequestParam Integer size) {
+                                                    @RequestParam(defaultValue = "10") Integer from,
+                                                    @RequestParam(defaultValue = "10") Integer size) {
         log.info("controller. get. /admin/users. find all suers with parameters = [ids = {}, from = {}, size = {}]",
                 ids, from, size);
         return userService.findAllUsersWithParameters(ids, from, size);

@@ -1,4 +1,4 @@
-package ru.practicum.controller.category;
+package ru.practicum.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.dto.category.CategoryDto;
 import ru.practicum.service.category.CategoryService;
 
+import javax.validation.Valid;
+
 @Slf4j
 @Validated
 @RestController
@@ -24,20 +26,20 @@ public class CategoryController {
 
     @PostMapping
     public CategoryDto createCategory(@RequestBody CategoryDto categoryDto) {
-        log.info("controller. post. /admin/categories. ");
+        log.info("controller. post. /admin/categories. create category");
         return categoryService.createCategory(categoryDto);
     }
 
     @DeleteMapping("/{id}")
     public void deleteCategory(@PathVariable Integer id) {
-        log.info("");
+        log.info("controller. post. /admin/categories/{}. delete category", id);
         categoryService.deleteCategoryById(id);
     }
 
     @PatchMapping("/{id}")
-    public CategoryDto updateCategory(@RequestBody CategoryDto categoryDto,
+    public CategoryDto updateCategory(@RequestBody @Valid CategoryDto categoryDto,
                                       @PathVariable Integer id) {
-        log.info("");
+        log.info("controller. post. /admin/categories/{}. update category", id);
         return categoryService.updateCategory(categoryDto, id);
     }
 
