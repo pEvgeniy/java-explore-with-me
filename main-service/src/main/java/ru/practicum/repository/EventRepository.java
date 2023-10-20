@@ -1,6 +1,7 @@
 package ru.practicum.repository;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.controller.events.EventsPublicController;
@@ -35,18 +36,17 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
             "AND (:categories IS NULL OR e.category.id IN :categories) " +
             "AND (:paid IS NULL OR e.paid = :paid) " +
             "AND ((:rangeStart IS NULL OR :rangeEnd IS NULL) OR e.eventDate BETWEEN :rangeStart AND :rangeEnd) " +
-            "AND (:onlyAvailable = false OR (e.confirmedRequests < e.participantsLimit))" +
+            "AND (:onlyAvailable = false OR (e.confirmedRequests < e.participantsLimit)) "
 //            "CASE WHEN :onlyAvailable = true THEN (e.confirmedRequests < e.participantsLimit) END " +
 //            "AND e.confirmedRequests < e.participantsLimit OR e.participantsLimit IS NULL " +
-            "ORDER BY " +
-            "CASE WHEN :sort = 'EVENT_DATE' THEN e.eventDate END, " +
-            "CASE WHEN :sort = 'VIEWS' THEN e.views END")
+//            "ORDER BY " +
+//            "CASE WHEN :sort = 'EVENT_DATE' THEN e.eventDate END "
+            /*"CASE WHEN :sort = 'VIEWS' THEN e.views END"*/)
     List<Event> findPublishedEventsWithFilters(String text,
                                                List<Integer> categories,
                                                Boolean paid,
                                                LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                                Boolean onlyAvailable,
-                                               EventsPublicController.SortVariation sort,
                                                PageRequest pageRequest);
 
 }

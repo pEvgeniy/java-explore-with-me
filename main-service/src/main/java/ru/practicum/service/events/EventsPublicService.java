@@ -1,6 +1,5 @@
 package ru.practicum.service.events;
 
-import ru.practicum.controller.events.EventsPublicController;
 import ru.practicum.dto.events.EventFullDto;
 import ru.practicum.dto.events.EventShortDto;
 
@@ -15,7 +14,7 @@ public interface EventsPublicService {
                                    Boolean paid,
                                    LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                    Boolean onlyAvailable,
-                                   EventsPublicController.SortVariation sort,
+                                   String sort,
                                    Integer from, Integer size,
                                    HttpServletRequest request);
 

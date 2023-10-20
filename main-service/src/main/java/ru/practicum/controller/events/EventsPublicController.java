@@ -24,13 +24,13 @@ public class EventsPublicController {
     private final EventsPublicService eventsPublicService;
 
     @GetMapping
-    public List<EventShortDto> findEvents(@RequestParam String text,
-                                          @RequestParam List<Integer> categories,
-                                          @RequestParam Boolean paid,
-                                          @RequestParam LocalDateTime rangeStart,
-                                          @RequestParam LocalDateTime rangeEnd,
+    public List<EventShortDto> findEvents(@RequestParam(required = false) String text,
+                                          @RequestParam(required = false) List<Integer> categories,
+                                          @RequestParam(required = false) Boolean paid,
+                                          @RequestParam(required = false) LocalDateTime rangeStart,
+                                          @RequestParam(required = false) LocalDateTime rangeEnd,
                                           @RequestParam(defaultValue = "false") Boolean onlyAvailable,
-                                          @RequestParam SortVariation sort,
+                                          @RequestParam(defaultValue = "EVENT_DATE") String sort,
                                           @RequestParam(defaultValue = "0") Integer from,
                                           @RequestParam(defaultValue = "10") Integer size,
                                           HttpServletRequest request) {
@@ -45,10 +45,6 @@ public class EventsPublicController {
     public EventFullDto findEventById(@PathVariable Integer id, HttpServletRequest request) {
         log.info("controller. get. /events/{}. find event", id);
         return eventsPublicService.findEventById(id, request);
-    }
-
-    public enum SortVariation {
-        EVENT_DATE, VIEWS
     }
 
 }

@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.controller.events.EventsPublicController;
 import ru.practicum.dto.events.EventFullDto;
 import ru.practicum.dto.events.EventShortDto;
 import ru.practicum.ewm.client.stats.StatsClient;
 import ru.practicum.ewm.dto.stats.ViewStatsDto;
+import ru.practicum.exception.BadParameterException;
 import ru.practicum.exception.EntityNotFoundException;
 import ru.practicum.mapper.event.EventFullMapper;
 import ru.practicum.mapper.event.EventShortMapper;
@@ -19,6 +19,7 @@ import ru.practicum.repository.EventRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -46,7 +47,7 @@ public class EventsPublicServiceImpl implements EventsPublicService {
                                           Boolean paid,
                                           LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                           Boolean onlyAvailable,
-                                          EventsPublicController.SortVariation sort,
+                                          String sort,
                                           Integer from, Integer size,
                                           HttpServletRequest request) {
         if (rangeStart == null) {
@@ -57,7 +58,8 @@ public class EventsPublicServiceImpl implements EventsPublicService {
         }
 
         List<Event> events = eventRepository.findPublishedEventsWithFilters(text, categories, paid, rangeStart, rangeEnd,
-                onlyAvailable, sort, PageRequest.of(from / size, size));
+                onlyAvailable, PageRequest.of(from / size, size));
+        sortEvents(sort, events);
         createHit(request);
         return getEventsWithViews(events).stream()
                 .map(eventShortMapper::toDto)
@@ -74,6 +76,19 @@ public class EventsPublicServiceImpl implements EventsPublicService {
                 .findFirst()
                 .map(eventFullMapper::toDto)
                 .get();
+    }
+
+    private List<Event> sortEvents(String sortType, List<Event> events) {
+        switch (sortType) {
+            case "EVENT_DATE":
+                events.sort(Comparator.comparing(Event::getEventDate));
+                return events;
+            case "VIEWS":
+                getEventsWithViews(events).sort(Comparator.comparingInt(Event::getViews));
+                return events;
+            default:
+                throw new BadParameterException(String.format("Event sort type must be EVENT_DATE or VIEWS, but it is %s", sortType));
+        }
     }
 
     private void createHit(HttpServletRequest request) {
