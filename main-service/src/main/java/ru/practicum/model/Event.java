@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.Transient;
 import ru.practicum.dto.events.EventFullDto;
 
 import javax.persistence.Column;
@@ -67,12 +68,12 @@ public class Event {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "initiator_id")
+    @JoinColumn(name = "initiator_id")
     private User initiator;
 
     @NotNull
     @OneToOne
-    @Column(name = "location_id")
+    @JoinColumn(name = "location_id")
     private Location location;
 
     @NotNull
@@ -98,6 +99,8 @@ public class Event {
     private String title;
 
     @PositiveOrZero
+//    TODO exclude views from entity
+    @Transient
     private Integer views;
 
 }
