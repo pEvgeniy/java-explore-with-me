@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.events.EventFullDto;
 import ru.practicum.dto.events.UpdateEventAdminRequestDto;
-import ru.practicum.dto.events.UpdateEventUserRequestDto;
 import ru.practicum.exception.EntityForbiddenException;
 import ru.practicum.exception.EntityNotFoundException;
 import ru.practicum.mapper.CategoryMapper;
-import ru.practicum.mapper.EventFullMapper;
+import ru.practicum.mapper.event.EventFullMapper;
 import ru.practicum.mapper.LocationMapper;
 import ru.practicum.model.Event;
 import ru.practicum.repository.EventRepository;
@@ -33,6 +33,7 @@ public class EventsAdminServiceImpl implements EventsAdminService {
     private final LocationMapper locationMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<EventFullDto> findAllEvents(List<Integer> users,
                                             List<EventFullDto.EventState> states,
                                             List<Integer> categories,
@@ -49,6 +50,7 @@ public class EventsAdminServiceImpl implements EventsAdminService {
     }
 
     @Override
+    @Transactional
     public EventFullDto updateEvent(Integer eventId, UpdateEventAdminRequestDto updateEventAdminRequestDto) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Event with eventId = %s not found", eventId)));

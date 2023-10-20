@@ -4,17 +4,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.controller.events.EventsPublicController;
 import ru.practicum.dto.events.EventFullDto;
 import ru.practicum.dto.events.EventShortDto;
 import ru.practicum.ewm.client.stats.StatsClient;
-import ru.practicum.ewm.dto.stats.EndpointHitDto;
 import ru.practicum.ewm.dto.stats.ViewStatsDto;
 import ru.practicum.exception.EntityNotFoundException;
-import ru.practicum.mapper.EventFullMapper;
-import ru.practicum.mapper.EventShortMapper;
+import ru.practicum.mapper.event.EventFullMapper;
+import ru.practicum.mapper.event.EventShortMapper;
 import ru.practicum.model.Event;
 import ru.practicum.repository.EventRepository;
 
@@ -41,6 +40,7 @@ public class EventsPublicServiceImpl implements EventsPublicService {
     private String appName;
 
     @Override
+    @Transactional(readOnly = true)
     public List<EventShortDto> findEvents(String text,
                                           List<Integer> categories,
                                           Boolean paid,
@@ -65,6 +65,7 @@ public class EventsPublicServiceImpl implements EventsPublicService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public EventFullDto findEventById(Integer id, HttpServletRequest request) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Event with eventId = %s not found", id)));
