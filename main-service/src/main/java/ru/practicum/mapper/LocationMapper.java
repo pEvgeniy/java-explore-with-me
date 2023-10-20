@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import ru.practicum.dto.events.LocationDto;
 import ru.practicum.model.Location;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface LocationMapper extends Mappable<Location, LocationDto> {
 
     @Override

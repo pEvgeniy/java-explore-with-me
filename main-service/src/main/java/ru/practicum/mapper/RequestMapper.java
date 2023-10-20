@@ -8,6 +8,8 @@ import ru.practicum.model.Request;
 @Mapper(componentModel = "spring")
 public interface RequestMapper extends Mappable<Request, ParticipationRequestDto> {
     @Override
+    @Mapping(target = "event", ignore = true)
+    @Mapping(target = "requester", ignore = true)
     Request toEntity(ParticipationRequestDto dto);
 
     @Override
