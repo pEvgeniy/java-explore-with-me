@@ -9,6 +9,8 @@ import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -19,13 +21,12 @@ import java.util.List;
 @ToString
 public class NewCompilationDto {
 
-    @NotNull
-    private List<Integer> events;
+    private List<Integer> events = new ArrayList<>();
 
-    @NotNull
-    private Boolean pinned;
+    private Boolean pinned = false;
 
     @NotBlank
+    @Size(max = 50)
     private String title;
 
 }

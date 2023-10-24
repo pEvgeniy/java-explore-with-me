@@ -11,6 +11,7 @@ import ru.practicum.dto.events.EventShortDto;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Getter
@@ -31,6 +32,7 @@ public class CompilationDto {
     private Boolean pinned;
 
     @NotBlank
+    @Size(max = 50)
     private String title;
 
 }

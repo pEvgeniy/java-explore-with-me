@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Getter
@@ -21,6 +22,7 @@ public class UpdateCompilationRequestDto {
 
     private Boolean pinned;
 
+    @Size(min = 1, max = 50)
     private String title;
 
 }

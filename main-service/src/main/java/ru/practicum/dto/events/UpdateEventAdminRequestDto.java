@@ -1,5 +1,6 @@
 package ru.practicum.dto.events;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,10 +9,8 @@ import lombok.Setter;
 import lombok.ToString;
 import ru.practicum.dto.category.CategoryDto;
 
-import javax.validation.constraints.Future;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Getter
@@ -22,32 +21,29 @@ import java.time.LocalDateTime;
 @ToString
 public class UpdateEventAdminRequestDto {
 
-    @NotBlank
+    @Size(min = 20, max = 2000)
     private String annotation;
 
-    @NotNull
-    private CategoryDto category;
+    private Integer category;
 
-    @NotBlank
+    @Size(min = 20, max = 7000)
     private String description;
 
-    @Future
+    @FutureOrPresent
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
 
-    @NotNull
     private LocationDto location;
 
-    @NotNull
     private Boolean paid;
 
-    @PositiveOrZero
-    private Integer participantsLimit;
+    private Integer participantLimit;
 
-    private Boolean requestModeration = true;
+    private Boolean requestModeration;
 
     private EventUpdateState stateAction;
 
-    @NotBlank
+    @Size(min = 3, max = 120)
     private String title;
 
     public enum EventUpdateState {
