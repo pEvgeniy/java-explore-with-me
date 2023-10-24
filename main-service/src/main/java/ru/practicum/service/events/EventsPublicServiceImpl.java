@@ -61,7 +61,7 @@ public class EventsPublicServiceImpl implements EventsPublicService {
                         rangeStart, rangeEnd, PageRequest.of(from / size, size));
         if (!events.isEmpty()) {
             sortEvents(sort, events);
-            events.forEach(e -> createHit(request));
+            createHit(request);
         }
         return getEventsWithViews(events).stream()
                 .map(eventShortMapper::toDto)
