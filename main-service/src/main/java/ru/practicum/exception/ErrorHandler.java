@@ -1,6 +1,7 @@
 package ru.practicum.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -34,6 +35,7 @@ public class ErrorHandler {
     @ExceptionHandler({
             MethodArgumentNotValidException.class,
             ConstraintViolationException.class,
+            IllegalArgumentException.class,
             HttpMessageNotReadableException.class,
             MissingRequestHeaderException.class,
             MissingServletRequestParameterException.class})
@@ -50,7 +52,7 @@ public class ErrorHandler {
         );
     }
 
-    @ExceptionHandler(EntityForbiddenException.class)
+    @ExceptionHandler({EntityForbiddenException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ApiError handleForbiddenExceptions(Exception e) {
         log.error(e.getMessage());
@@ -60,6 +62,22 @@ public class ErrorHandler {
                 e.getMessage(),
                 e.getCause(),
                 HttpStatus.FORBIDDEN,
+                LocalDateTime.now()
+        );
+    }
+
+    @ExceptionHandler({
+            EntityConflictException.class,
+            DataIntegrityViolationException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleConflictExceptions(Exception e) {
+        log.error(e.getMessage());
+        return new ApiError(
+                e.getClass().toString(),
+                e.getStackTrace(),
+                e.getMessage(),
+                e.getCause(),
+                HttpStatus.CONFLICT,
                 LocalDateTime.now()
         );
     }
