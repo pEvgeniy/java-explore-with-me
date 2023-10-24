@@ -36,9 +36,17 @@ public class StatisticServiceImpl implements StatisticService {
     public List<ViewStatsDto> findStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
         log.info("service. find statistic with params = [start = {}, end = {}, uris = {}, unique = {}]",
                 start, end, uris, unique);
+        validateDates(start, end);
         if (uris.isEmpty()) {
             return statisticRepository.findStatisticsByParametersWithoutUriFilter(start, end, unique);
         }
         return statisticRepository.findStatisticsByParametersWithUriFilter(start, end, uris, unique);
+    }
+
+    private void validateDates(LocalDateTime start, LocalDateTime end) {
+        if (end.isBefore(start)) {
+            throw new IllegalArgumentException(String.format("LocalDateTime validation error. Start must be before end. Start = %s, End = %s",
+                    start, end));
+        }
     }
 }
