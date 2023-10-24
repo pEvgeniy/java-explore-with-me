@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,9 +19,8 @@ import ru.practicum.ewm.stats.service.StatisticService;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ru.practicum.ewm.dto.stats.EndpointHitDto.TimeFormatter.DATE_TIME_PATTERN;
-
 @Slf4j
+@Validated
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
@@ -37,11 +37,11 @@ public class StatisticController {
 
     @GetMapping("/stats")
     @ResponseStatus(HttpStatus.OK)
-    public List<ViewStatsDto> findStats(@RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) LocalDateTime start,
-                                        @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) LocalDateTime end,
+    public List<ViewStatsDto> findStats(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+                                        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                         @RequestParam(defaultValue = "") List<String> uris,
                                         @RequestParam(defaultValue = "false") Boolean unique) {
-        log.info("controller. post. /stats. find statistic. params = [start = {}, end = {}, uris = {}, unique = {}]",
+        log.info("controller. get. /stats. find statistic. params = [start = {}, end = {}, uris = {}, unique = {}]",
                 start, end, uris, unique);
         return statisticService.findStats(start, end, uris, unique);
     }
