@@ -11,7 +11,6 @@ import ru.practicum.dto.events.EventShortDto;
 import ru.practicum.ewm.client.stats.StatsClient;
 import ru.practicum.ewm.dto.stats.ViewStatsDto;
 import ru.practicum.exception.BadParameterException;
-import ru.practicum.exception.EntityConflictException;
 import ru.practicum.exception.EntityNotFoundException;
 import ru.practicum.mapper.event.EventFullMapper;
 import ru.practicum.mapper.event.EventShortMapper;

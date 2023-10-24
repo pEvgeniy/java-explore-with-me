@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.category.CategoryDto;
 import ru.practicum.exception.EntityConflictException;
-import ru.practicum.exception.EntityForbiddenException;
 import ru.practicum.exception.EntityNotFoundException;
 import ru.practicum.mapper.CategoryMapper;
 import ru.practicum.model.Category;

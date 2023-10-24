@@ -14,14 +14,12 @@ import ru.practicum.dto.requests.EventRequestStatusUpdateResultDto;
 import ru.practicum.dto.requests.ParticipationRequestDto;
 import ru.practicum.dto.requests.RequestStatus;
 import ru.practicum.exception.EntityConflictException;
-import ru.practicum.exception.EntityForbiddenException;
 import ru.practicum.exception.EntityNotFoundException;
-import ru.practicum.mapper.CategoryMapper;
+import ru.practicum.mapper.LocationMapper;
+import ru.practicum.mapper.RequestMapper;
 import ru.practicum.mapper.event.EventFullMapper;
 import ru.practicum.mapper.event.EventNewMapper;
 import ru.practicum.mapper.event.EventShortMapper;
-import ru.practicum.mapper.LocationMapper;
-import ru.practicum.mapper.RequestMapper;
 import ru.practicum.model.Category;
 import ru.practicum.model.Event;
 import ru.practicum.model.Location;
@@ -34,12 +32,11 @@ import ru.practicum.repository.RequestRepository;
 import ru.practicum.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.practicum.dto.requests.EventRequestStatusUpdateRequestDto.*;
+import static ru.practicum.dto.requests.EventRequestStatusUpdateRequestDto.RequestUpdateStatus;
 
 @Slf4j
 @Service
