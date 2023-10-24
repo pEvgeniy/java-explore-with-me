@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.dto.events.EventFullDto;
 import ru.practicum.dto.events.EventShortDto;
 import ru.practicum.service.events.EventsPublicService;
-import ru.practicum.validation.ConsistentDateTimeParameter;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
