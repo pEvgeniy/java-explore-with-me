@@ -17,6 +17,8 @@ import ru.practicum.dto.compilation.NewCompilationDto;
 import ru.practicum.dto.compilation.UpdateCompilationRequestDto;
 import ru.practicum.service.compilation.CompilationsAdminService;
 
+import javax.validation.Valid;
+
 @Slf4j
 @Validated
 @RestController
@@ -27,7 +29,8 @@ public class CompilationsAdminController {
     private final CompilationsAdminService compilationsService;
 
     @PostMapping
-    public CompilationDto createCompilation(@RequestBody NewCompilationDto compilationDto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public CompilationDto createCompilation(@RequestBody @Valid NewCompilationDto compilationDto) {
         log.info("controller. post. /admin/compilations. create compilation with body = {}", compilationDto);
         return compilationsService.createCompilation(compilationDto);
     }
@@ -41,7 +44,7 @@ public class CompilationsAdminController {
 
     @PatchMapping("/{compId}")
     public CompilationDto updateCompilationById(@PathVariable Integer compId,
-                                                @RequestBody UpdateCompilationRequestDto updateCompilationRequestDto) {
+                                                @RequestBody @Valid UpdateCompilationRequestDto updateCompilationRequestDto) {
         log.info("controller. patch. /admin/compilations/{}. update compilation", compId);
         return compilationsService.updateCompilationById(compId, updateCompilationRequestDto);
     }

@@ -21,7 +21,7 @@ public class CompilationsPublicController {
     private final CompilationsPublicService compilationsService;
 
     @GetMapping
-    public List<CompilationDto> findCompilations(@RequestParam Boolean pinned,
+    public List<CompilationDto> findCompilations(@RequestParam(required = false) Boolean pinned,
                                                  @RequestParam(defaultValue = "0") Integer from,
                                                  @RequestParam(defaultValue = "10") Integer size) {
         log.info("controller. get. /compilations. find compilations with parameters = [pinned = {}, from = {}, size = {}]",
