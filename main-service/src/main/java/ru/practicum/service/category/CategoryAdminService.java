@@ -2,7 +2,7 @@ package ru.practicum.service.category;
 
 import ru.practicum.dto.category.CategoryDto;
 
-public interface CategoryService {
+public interface CategoryAdminService {
 
     CategoryDto createCategory(CategoryDto categoryDto);
 

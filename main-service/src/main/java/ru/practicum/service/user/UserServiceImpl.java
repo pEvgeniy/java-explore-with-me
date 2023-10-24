@@ -26,7 +26,9 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public List<UserDto> findAllUsersWithParameters(List<Integer> ids, Integer from, Integer size) {
         PageRequest pageRequest = PageRequest.of(from / size, size);
-        List<User> foundUsers = userRepository.findAllUsersByIdIn(ids, pageRequest);
+        List<User> foundUsers =
+                ids == null ? userRepository.findAll(pageRequest).getContent()
+                        : userRepository.findAllUsersByIdIn(ids, pageRequest);
         log.info("service. found by params = [ids = {}, from = {}, size = {}] users = {}", ids, from, size, foundUsers);
         return foundUsers.stream()
                 .map(userMapper::toDto)

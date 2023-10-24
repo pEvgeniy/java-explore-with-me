@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.events.EventFullDto;
 import ru.practicum.dto.requests.ParticipationRequestDto;
 import ru.practicum.dto.requests.RequestStatus;
+import ru.practicum.exception.EntityConflictException;
 import ru.practicum.exception.EntityForbiddenException;
 import ru.practicum.exception.EntityNotFoundException;
 import ru.practicum.mapper.RequestMapper;
@@ -17,6 +18,7 @@ import ru.practicum.repository.EventRepository;
 import ru.practicum.repository.RequestRepository;
 import ru.practicum.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,15 +52,15 @@ public class RequestsServiceImpl implements RequestsService {
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Event with eventId = %s not found", eventId)));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("User with userId = %s not found", userId)));
-        validateParticipantsLimit(event.getConfirmedRequests(), event.getParticipantsLimit());
+        validateParticipantsLimit(event.getConfirmedRequests(), event.getParticipantLimit());
         if (requestRepository.existsByRequesterIdAndEventId(userId, eventId)) {
-            throw new EntityForbiddenException("Request already exists");
+            throw new EntityConflictException("Request already exists");
         }
         if (event.getInitiator().getId().equals(userId)) {
-            throw new EntityForbiddenException("Initiator can not make a request for his own event");
+            throw new EntityConflictException("Initiator can not make a request for his own event");
         }
         if (!event.getState().equals(EventFullDto.EventState.PUBLISHED)) {
-            throw new EntityForbiddenException("Event have not published yet");
+            throw new EntityConflictException("Event have not published yet");
         }
         Request request = requestRepository.save(buildRequest(event, user));
         if (request.getStatus().equals(RequestStatus.CONFIRMED)) {
@@ -79,8 +81,8 @@ public class RequestsServiceImpl implements RequestsService {
     }
 
     private void validateParticipantsLimit(Integer confirmedRequests, Integer participantsLimit) {
-        if (confirmedRequests >= participantsLimit) {
-            throw new EntityForbiddenException("Event palaces are out of limits");
+        if (participantsLimit != 0 && participantsLimit.equals(confirmedRequests)) {
+            throw new EntityConflictException("Participant limit is full");
         }
     }
 
@@ -88,7 +90,9 @@ public class RequestsServiceImpl implements RequestsService {
         return Request.builder()
                 .event(event)
                 .requester(user)
-                .status(event.getRequestModeration() ? RequestStatus.PENDING : RequestStatus.CONFIRMED)
+                .status((!event.getRequestModeration() || event.getParticipantLimit() == 0) ?
+                        RequestStatus.CONFIRMED : RequestStatus.PENDING)
+                .created(LocalDateTime.now())
                 .build();
     }
 }

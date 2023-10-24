@@ -13,6 +13,7 @@ import ru.practicum.dto.requests.EventRequestStatusUpdateRequestDto;
 import ru.practicum.dto.requests.EventRequestStatusUpdateResultDto;
 import ru.practicum.dto.requests.ParticipationRequestDto;
 import ru.practicum.dto.requests.RequestStatus;
+import ru.practicum.exception.EntityConflictException;
 import ru.practicum.exception.EntityForbiddenException;
 import ru.practicum.exception.EntityNotFoundException;
 import ru.practicum.mapper.CategoryMapper;
@@ -21,24 +22,39 @@ import ru.practicum.mapper.event.EventNewMapper;
 import ru.practicum.mapper.event.EventShortMapper;
 import ru.practicum.mapper.LocationMapper;
 import ru.practicum.mapper.RequestMapper;
+import ru.practicum.model.Category;
 import ru.practicum.model.Event;
+import ru.practicum.model.Location;
 import ru.practicum.model.Request;
+import ru.practicum.model.User;
+import ru.practicum.repository.CategoryRepository;
 import ru.practicum.repository.EventRepository;
+import ru.practicum.repository.LocationRepository;
 import ru.practicum.repository.RequestRepository;
+import ru.practicum.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.practicum.dto.requests.EventRequestStatusUpdateRequestDto.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class EventsPrivateServiceImpl implements EventsPrivateService {
 
+    private final UserRepository userRepository;
+
     private final EventRepository eventRepository;
 
     private final RequestRepository requestRepository;
+
+    private final CategoryRepository categoryRepository;
+
+    private final LocationRepository locationRepository;
 
     private final EventFullMapper eventFullMapper;
 
@@ -48,14 +64,18 @@ public class EventsPrivateServiceImpl implements EventsPrivateService {
 
     private final RequestMapper requestMapper;
 
-    private final CategoryMapper categoryMapper;
-
     private final LocationMapper locationMapper;
 
     @Override
     @Transactional
     public EventFullDto createEvent(Integer userId, NewEventDto eventDto) {
-        Event event = eventRepository.save(eventNewMapper.toEntity(eventDto));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("User with id = %s not found", userId)));
+        Category category = categoryRepository.findById(eventDto.getCategory())
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Category with id = %s not found", eventDto.getCategory())));
+        Event event = eventNewMapper.toEntity(eventDto);
+        setEventFields(event, user, category, event.getLocation());
+        eventRepository.save(event);
         log.info("service. created event = {}", event);
         return eventFullMapper.toDto(event);
     }
@@ -86,8 +106,8 @@ public class EventsPrivateServiceImpl implements EventsPrivateService {
         Event event = eventRepository.findByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Event with eventId = %s and userId = %s not found", eventId, userId)));
         if (event.getState().equals(EventFullDto.EventState.PUBLISHED)
-                || LocalDateTime.now().plusHours(2).isBefore(event.getEventDate())) {
-            throw new EntityForbiddenException(String.format("Event with eventId = %s forbidden to be changed", eventId));
+                || LocalDateTime.now().plusHours(2).isAfter(event.getEventDate())) {
+            throw new EntityConflictException(String.format("Event with eventId = %s forbidden to be changed", eventId));
         }
         return eventFullMapper.toDto(updateEvent(event, eventDto));
     }
@@ -109,20 +129,33 @@ public class EventsPrivateServiceImpl implements EventsPrivateService {
                                                                      EventRequestStatusUpdateRequestDto requestsToUpdate) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Event with eventId = %s not found", eventId)));
-        if ((event.getParticipantsLimit() == 0 || !event.getRequestModeration())
-                && requestsToUpdate.getStatus().equals(RequestStatus.CONFIRMED)) {
+        if ((event.getParticipantLimit() == 0 || !event.getRequestModeration())
+                && requestsToUpdate.getStatus().equals(RequestUpdateStatus.REJECTED)) {
             return new EventRequestStatusUpdateResultDto(Collections.emptyList(), Collections.emptyList());
         }
-        if (event.getParticipantsLimit() == 0 && requestsToUpdate.getStatus().equals(RequestStatus.CANCELED)) {
-            return fillEventRequestsWithCanceled(userId, eventId, requestsToUpdate.getRequestIds());
+        if (event.getConfirmedRequests() >= event.getParticipantLimit()) {
+            throw new EntityConflictException("Participant limit is full");
         }
         List<Request> requests = requestRepository.findAllByEventInitiatorIdAndEventIdAndIdIn(userId, eventId,
                 requestsToUpdate.getRequestIds());
         return makeEventRequestsFilledWithUpdatedStatuses(requests, event, requestsToUpdate.getStatus());
     }
 
+    private void setEventFields(Event event, User user, Category category, Location location) {
+        locationRepository.save(location);
+        event.setInitiator(user);
+        event.setCategory(category);
+        event.setLocation(location);
+        event.setCreatedOn(LocalDateTime.now());
+        event.setConfirmedRequests(0);
+        event.setState(EventFullDto.EventState.PENDING);
+    }
+
     private Event updateEvent(Event event, UpdateEventUserRequestDto updateEvent) {
         updateEventFields(event, updateEvent);
+        if (updateEvent.getStateAction() == null) {
+            return event;
+        }
         switch (updateEvent.getStateAction()) {
             case CANCEL_REVIEW:
                 event.setState(EventFullDto.EventState.CANCELED);
@@ -143,7 +176,9 @@ public class EventsPrivateServiceImpl implements EventsPrivateService {
             event.setAnnotation(updateEvent.getAnnotation());
         }
         if (updateEvent.getCategory() != null) {
-            event.setCategory(categoryMapper.toEntity(updateEvent.getCategory()));
+            Category category = categoryRepository.findById(updateEvent.getCategory())
+                    .orElseThrow(() -> new EntityNotFoundException(String.format("Category with id = %s not found", updateEvent.getCategory())));
+            event.setCategory(category);
         }
         if (updateEvent.getDescription() != null) {
             event.setDescription(updateEvent.getDescription());
@@ -152,13 +187,14 @@ public class EventsPrivateServiceImpl implements EventsPrivateService {
             event.setEventDate(updateEvent.getEventDate());
         }
         if (updateEvent.getLocation() != null) {
-            event.setLocation(locationMapper.toEntity(updateEvent.getLocation()));
+            Location location = locationRepository.save(locationMapper.toEntity(updateEvent.getLocation()));
+            event.setLocation(location);
         }
         if (updateEvent.getPaid() != null) {
             event.setPaid(updateEvent.getPaid());
         }
-        if (updateEvent.getParticipantsLimit() != null) {
-            event.setParticipantsLimit(updateEvent.getParticipantsLimit());
+        if (updateEvent.getParticipantLimit() != null) {
+            event.setParticipantLimit(updateEvent.getParticipantLimit());
         }
         if (updateEvent.getRequestModeration() != null) {
             event.setRequestModeration(updateEvent.getRequestModeration());
@@ -168,32 +204,24 @@ public class EventsPrivateServiceImpl implements EventsPrivateService {
         }
     }
 
-    private EventRequestStatusUpdateResultDto fillEventRequestsWithCanceled(Integer userId, Integer eventId, List<Integer> requestsIds) {
-        return new EventRequestStatusUpdateResultDto(
-                Collections.emptyList(),
-                requestRepository.findAllByEventInitiatorIdAndEventIdAndIdIn(userId, eventId, requestsIds)
-                        .stream()
-                        .map(requestMapper::toDto)
-                        .collect(Collectors.toList())
-        );
-    }
-
     private EventRequestStatusUpdateResultDto makeEventRequestsFilledWithUpdatedStatuses(List<Request> requests,
                                                                                          Event event,
-                                                                                         RequestStatus requestStatus) {
+                                                                                         RequestUpdateStatus requestStatus) {
         EventRequestStatusUpdateResultDto updateResultDto = new EventRequestStatusUpdateResultDto();
         for (Request request : requests) {
-            if (requestStatus.equals(RequestStatus.CONFIRMED)) {
-                if (event.getConfirmedRequests() < event.getParticipantsLimit()) {
+            if (requestStatus.equals(RequestUpdateStatus.CONFIRMED)) {
+                if (event.getConfirmedRequests() < event.getParticipantLimit()) {
                     request.setStatus(RequestStatus.CONFIRMED);
                     updateResultDto.getConfirmedRequests().add(requestMapper.toDto(request));
+                    event.setConfirmedRequests(event.getConfirmedRequests() + 1);
                 } else {
-                    request.setStatus(RequestStatus.CANCELED);
+                    request.setStatus(RequestStatus.REJECTED);
                     updateResultDto.getRejectedRequests().add(requestMapper.toDto(request));
                 }
+            } else {
+                request.setStatus(RequestStatus.REJECTED);
+                updateResultDto.getRejectedRequests().add(requestMapper.toDto(request));
             }
-            request.setStatus(RequestStatus.CANCELED);
-            updateResultDto.getRejectedRequests().add(requestMapper.toDto(request));
         }
         return updateResultDto;
     }

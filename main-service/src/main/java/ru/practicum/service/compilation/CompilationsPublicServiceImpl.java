@@ -26,7 +26,9 @@ public class CompilationsPublicServiceImpl implements CompilationsPublicService 
     @Override
     @Transactional(readOnly = true)
     public List<CompilationDto> findCompilations(Boolean pinned, Integer from, Integer size) {
-        List<Compilation> compilations = compilationRepository.findAllByPinned(pinned, PageRequest.of(from / size, size));
+        List<Compilation> compilations = pinned == null ?
+                compilationRepository.findAll(PageRequest.of(from / size, size)).getContent() :
+                compilationRepository.findAllByPinned(pinned, PageRequest.of(from / size, size));
         log.info("service. found compilations = {}", compilations);
         return compilations.stream()
                 .map(compilationMapper::toDto)
