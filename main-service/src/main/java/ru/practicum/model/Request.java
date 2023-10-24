@@ -44,7 +44,7 @@ public class Request {
     @Column(name = "status")
     private RequestStatus status;
 
-    @Column(name = "crated_date")
-    private LocalDateTime createdAt;
+    @Column(name = "created_date")
+    private LocalDateTime created;
 
 }

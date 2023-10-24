@@ -10,6 +10,8 @@ import ru.practicum.dto.events.EventFullDto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -47,7 +49,7 @@ public class Event {
 
     @NotNull
     @OneToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "category_id")
     private Category category;
 
     @PositiveOrZero
@@ -55,8 +57,8 @@ public class Event {
     private Integer confirmedRequests;
 
     @PastOrPresent
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @Column(name = "created_on")
+    private LocalDateTime createdOn;
 
     @NotBlank
     @Column(name = "description")
@@ -82,16 +84,17 @@ public class Event {
 
     @PositiveOrZero
     @Column(name = "participant_limit")
-    private Integer participantsLimit;
+    private Integer participantLimit;
 
     @PastOrPresent
-    @Column(name = "published_at")
-    private LocalDateTime publishedAt;
+    @Column(name = "published_on")
+    private LocalDateTime publishedOn;
 
     @Column(name = "request_moderation")
     private Boolean requestModeration;
 
     @Column(name = "state")
+    @Enumerated(EnumType.STRING)
     private EventFullDto.EventState state;
 
     @NotBlank
@@ -99,7 +102,6 @@ public class Event {
     private String title;
 
     @PositiveOrZero
-//    TODO exclude views from entity
     @Transient
     private Integer views;
 
