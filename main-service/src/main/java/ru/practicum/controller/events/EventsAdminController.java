@@ -2,6 +2,7 @@ package ru.practicum.controller.events;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -28,13 +29,14 @@ public class EventsAdminController {
     private final EventsAdminService eventsAdminService;
 
     @GetMapping
-    public List<EventFullDto> findAllEvents(@RequestParam List<Integer> users,
-                                            @RequestParam List<EventFullDto.EventState> states,
-                                            @RequestParam List<Integer> categories,
-                                            @RequestParam LocalDateTime rangeStart,
-                                            @RequestParam LocalDateTime rangeEnd,
-                                            @RequestParam(defaultValue = "10") Integer from,
-                                            @RequestParam(defaultValue = "10") Integer size) {
+    public List<EventFullDto> findAllEvents(
+            @RequestParam(required = false) List<Integer> users,
+            @RequestParam(required = false) List<EventFullDto.EventState> states,
+            @RequestParam(required = false) List<Integer> categories,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
+            @RequestParam(defaultValue = "0") Integer from,
+            @RequestParam(defaultValue = "10") Integer size) {
         log.info("controller. get. /admin/events. findAllEvents with parameters = [users = {}, states = {}, categories = {}, " +
                 "rangeStart = {}, rangeEnd = {}, from = {}, size = {}]", users, states, categories, rangeStart, rangeEnd, from, size);
         return eventsAdminService.findAllEvents(users, states, categories, rangeStart, rangeEnd, from, size);

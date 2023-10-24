@@ -2,6 +2,7 @@ package ru.practicum.controller.events;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.dto.events.EventFullDto;
 import ru.practicum.dto.events.EventShortDto;
@@ -33,6 +35,7 @@ public class EventsPrivateController {
     private final EventsPrivateService eventsService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto createEvent(@PathVariable Integer userId, @RequestBody @Valid NewEventDto eventDto) {
         log.info("controller. post. /users/{userId}/events. create event with userId = {} and body = {}",
                 userId, eventDto);
@@ -41,7 +44,7 @@ public class EventsPrivateController {
 
     @GetMapping
     public List<EventShortDto> findEventsForUser(@PathVariable Integer userId,
-                                                 @RequestParam(defaultValue = "10") Integer from,
+                                                 @RequestParam(defaultValue = "0") Integer from,
                                                  @RequestParam(defaultValue = "10") Integer size) {
         log.info("controller. get. /users/{}/events. find events with parameters = [from = {}, size = {}]",
                 userId, from, size);
