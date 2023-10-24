@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -19,9 +20,9 @@ import java.util.List;
 public class EventRequestStatusUpdateResultDto {
 
     @NotNull
-    private List<ParticipationRequestDto> confirmedRequests;
+    private List<ParticipationRequestDto> confirmedRequests = new ArrayList<>();
 
     @NotNull
-    private List<ParticipationRequestDto> rejectedRequests;
+    private List<ParticipationRequestDto> rejectedRequests = new ArrayList<>();
 
 }

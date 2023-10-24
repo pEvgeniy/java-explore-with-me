@@ -19,6 +19,10 @@ public class EventRequestStatusUpdateRequestDto {
 
     private List<Integer> requestIds;
 
-    private RequestStatus status;
+    private RequestUpdateStatus status;
+
+    public enum RequestUpdateStatus {
+        CONFIRMED, REJECTED
+    }
 
 }
