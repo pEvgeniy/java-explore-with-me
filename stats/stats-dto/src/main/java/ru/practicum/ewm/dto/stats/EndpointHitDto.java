@@ -36,6 +36,6 @@ public class EndpointHitDto {
     private LocalDateTime timestamp = LocalDateTime.now();
 
     public static class TimeFormatter {
-        public static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+        public static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
     }
 }
