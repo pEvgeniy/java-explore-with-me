@@ -90,7 +90,7 @@ public class EventsAdminServiceImpl implements EventsAdminService {
     }
 
     private void updateEventFields(Event event, UpdateEventAdminRequestDto updateEvent) {
-        if (updateEvent.getAnnotation() != null) {
+        if (updateEvent.getAnnotation() != null && !updateEvent.getAnnotation().isBlank()) {
             event.setAnnotation(updateEvent.getAnnotation());
         }
         if (updateEvent.getCategory() != null) {
@@ -98,7 +98,7 @@ public class EventsAdminServiceImpl implements EventsAdminService {
                     .orElseThrow(() -> new EntityNotFoundException(String.format("Category with id = %s not found", updateEvent.getCategory())));
             event.setCategory(category);
         }
-        if (updateEvent.getDescription() != null) {
+        if (updateEvent.getDescription() != null && !updateEvent.getDescription().isBlank()) {
             event.setDescription(updateEvent.getDescription());
         }
         if (updateEvent.getEventDate() != null) {
@@ -117,7 +117,7 @@ public class EventsAdminServiceImpl implements EventsAdminService {
         if (updateEvent.getRequestModeration() != null) {
             event.setRequestModeration(updateEvent.getRequestModeration());
         }
-        if (updateEvent.getTitle() != null) {
+        if (updateEvent.getTitle() != null && !updateEvent.getTitle().isBlank()) {
             event.setTitle(updateEvent.getTitle());
         }
     }

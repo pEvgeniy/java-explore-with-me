@@ -169,7 +169,7 @@ public class EventsPrivateServiceImpl implements EventsPrivateService {
     }
 
     private void updateEventFields(Event event, UpdateEventUserRequestDto updateEvent) {
-        if (updateEvent.getAnnotation() != null) {
+        if (updateEvent.getAnnotation() != null && !updateEvent.getDescription().isBlank()) {
             event.setAnnotation(updateEvent.getAnnotation());
         }
         if (updateEvent.getCategory() != null) {
@@ -177,7 +177,7 @@ public class EventsPrivateServiceImpl implements EventsPrivateService {
                     .orElseThrow(() -> new EntityNotFoundException(String.format("Category with id = %s not found", updateEvent.getCategory())));
             event.setCategory(category);
         }
-        if (updateEvent.getDescription() != null) {
+        if (updateEvent.getDescription() != null && !updateEvent.getDescription().isBlank()) {
             event.setDescription(updateEvent.getDescription());
         }
         if (updateEvent.getEventDate() != null) {
@@ -196,7 +196,7 @@ public class EventsPrivateServiceImpl implements EventsPrivateService {
         if (updateEvent.getRequestModeration() != null) {
             event.setRequestModeration(updateEvent.getRequestModeration());
         }
-        if (updateEvent.getTitle() != null) {
+        if (updateEvent.getTitle() != null && !updateEvent.getTitle().isBlank()) {
             event.setTitle(updateEvent.getTitle());
         }
     }
