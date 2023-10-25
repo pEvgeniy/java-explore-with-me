@@ -58,7 +58,7 @@ public class CompilationsAdminServiceImpl implements CompilationsAdminService {
         if (updateRequest.getPinned() != null) {
             compilation.setPinned(updateRequest.getPinned());
         }
-        if (updateRequest.getTitle() != null) {
+        if (updateRequest.getTitle() != null && !updateRequest.getTitle().isBlank()) {
             compilation.setTitle(updateRequest.getTitle());
         }
         if (updateRequest.getEvents() != null) {
