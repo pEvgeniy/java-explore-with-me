@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.category.CategoryDto;
 import ru.practicum.exception.EntityNotFoundException;
 import ru.practicum.mapper.CategoryMapper;
@@ -24,6 +25,7 @@ public class CategoryPublicServiceImpl implements CategoryPublicService {
     private final CategoryMapper categoryMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<CategoryDto> findAllCategories(Integer from, Integer size) {
         Page<Category> categories = categoryRepository.findAll(PageRequest.of(from / size, size));
         log.info("service. found categories = {}", categories);
@@ -33,6 +35,7 @@ public class CategoryPublicServiceImpl implements CategoryPublicService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CategoryDto findCategoryById(Integer catId) {
         Category category = categoryRepository.findById(catId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Category with id = %s not found", catId)));
