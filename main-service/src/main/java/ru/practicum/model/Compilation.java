@@ -17,6 +17,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
@@ -34,9 +36,11 @@ public class Compilation {
     @Column(name = "id")
     private Integer id;
 
+    @NotNull
     @Column(name = "pinned")
     private Boolean pinned;
 
+    @NotBlank
     @Column(name = "title")
     private String title;
 

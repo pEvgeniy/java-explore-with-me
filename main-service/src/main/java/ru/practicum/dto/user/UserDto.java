@@ -24,6 +24,7 @@ public class UserDto {
     private Integer id;
 
     @Email
+    @NotBlank
     @Size(min = 6, max = 254)
     private String email;
 
