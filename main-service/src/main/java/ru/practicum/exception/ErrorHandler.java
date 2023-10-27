@@ -1,4 +1,4 @@
-package ru.practicum.ewm.stats.exception;
+package ru.practicum.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -52,7 +52,23 @@ public class ErrorHandler {
         );
     }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ExceptionHandler({EntityForbiddenException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiError handleForbiddenExceptions(Exception e) {
+        log.error(e.getMessage());
+        return new ApiError(
+                e.getClass().toString(),
+                e.getStackTrace(),
+                e.getMessage(),
+                e.getCause(),
+                HttpStatus.FORBIDDEN,
+                LocalDateTime.now()
+        );
+    }
+
+    @ExceptionHandler({
+            EntityConflictException.class,
+            DataIntegrityViolationException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleConflictExceptions(Exception e) {
         log.error(e.getMessage());

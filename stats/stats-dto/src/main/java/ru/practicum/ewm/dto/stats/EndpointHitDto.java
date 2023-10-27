@@ -12,8 +12,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-import static ru.practicum.ewm.dto.stats.EndpointHitDto.TimeFormatter.DATE_TIME_PATTERN;
-
 @Getter
 @Setter
 @ToString
@@ -32,10 +30,10 @@ public class EndpointHitDto {
     private String ip;
 
     @NotNull
-    @JsonFormat(pattern = DATE_TIME_PATTERN)
-    private LocalDateTime timestamp = LocalDateTime.now();
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime timestamp;
 
     public static class TimeFormatter {
-        public static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+        public static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
     }
 }

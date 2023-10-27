@@ -9,6 +9,7 @@ import ru.practicum.ewm.dto.stats.EndpointHitDto;
 import ru.practicum.ewm.dto.stats.ViewStatsDto;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -16,9 +17,11 @@ import java.util.List;
 public class StatsClient {
 
     private final WebClient webClient;
-    private static final String SERVER_URL = "http://localhost:9090";
+    private static final String SERVER_URL = "http://stats-server:9090";
     private static final String HIT_ENDPOINT = "/hit";
     private static final String FIND_STATS_ENDPOINT = "/stats";
+    private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
 
     public StatsClient() {
         this.webClient = WebClient.create(SERVER_URL);
@@ -32,7 +35,7 @@ public class StatsClient {
                 .retrieve()
                 .toEntity(EndpointHitDto.class)
                 .doOnSuccess(s -> log.info("web client. successful transition of dto = [app = {}, uri = {}, ip = {}, timestamp = {}]",
-                        app, uri, ip, timestamp))
+                        app, uri, ip, timestamp.format(DATE_TIME_FORMATTER)))
                 .doOnError(s -> log.info("web client. error during transition"))
                 .block();
     }
@@ -44,8 +47,8 @@ public class StatsClient {
         return this.webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(FIND_STATS_ENDPOINT)
-                        .queryParam("start", start)
-                        .queryParam("end", end)
+                        .queryParam("start", start.format(DATE_TIME_FORMATTER))
+                        .queryParam("end", start.format(DATE_TIME_FORMATTER))
                         .queryParam("uris", uris)
                         .queryParam("unique", unique)
                         .build())
