@@ -175,7 +175,7 @@ public class EventsPrivateServiceImpl implements EventsPrivateService {
         }
         if (updateEvent.getCategory() != null) {
             Category category = categoryRepository.findById(updateEvent.getCategory())
-                    .orElseThrow(() -> new EntityNotFoundException( String.format("Category with id = %s not found", updateEvent.getCategory())));
+                    .orElseThrow(() -> new EntityNotFoundException(String.format("Category with id = %s not found", updateEvent.getCategory())));
             event.setCategory(category);
         }
         if (updateEvent.getDescription() != null && !updateEvent.getDescription().isBlank()) {
