@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.comment.CommentDto;
 import ru.practicum.dto.comment.UpdateCommentRequestDto;
+import ru.practicum.dto.events.EventFullDto;
 import ru.practicum.exception.EntityConflictException;
 import ru.practicum.exception.EntityNotFoundException;
 import ru.practicum.mapper.CommentMapper;
@@ -36,6 +37,9 @@ public class CommentsPrivateServiceImpl implements CommentsPrivateService {
                 .orElseThrow(() -> new EntityNotFoundException(String.format("User with id = %s not found", userId)));
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Event with eventId = %s not found", eventId)));
+        if (!event.getState().equals(EventFullDto.EventState.PUBLISHED)) {
+            throw new EntityConflictException("Event must be published to leave comments");
+        }
         Comment comment = commentMapper.toEntity(commentDto);
         comment.setEvent(event);
         comment.setCommentOwner(user);
@@ -59,7 +63,7 @@ public class CommentsPrivateServiceImpl implements CommentsPrivateService {
         }
         updateTextField(comment, updateCommentRequestDto);
         log.info("service. updated comment text, new body = {}", comment);
-        return null;
+        return commentMapper.toDto(comment);
     }
 
     @Override
