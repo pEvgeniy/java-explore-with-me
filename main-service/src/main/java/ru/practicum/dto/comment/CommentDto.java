@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import ru.practicum.dto.user.UserShortDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PositiveOrZero;
@@ -21,6 +22,8 @@ public class CommentDto {
 
     @PositiveOrZero
     private Integer id;
+
+    private UserShortDto commentOwner;
 
     @NotBlank
     @Size(max = 512)
