@@ -20,27 +20,27 @@ import java.util.List;
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("/admin/comments/{comId}/event/{eventId}")
+@RequestMapping("/admin/comments")
 @RequiredArgsConstructor
 public class CommentsAdminController {
 
     private final CommentsAdminService commentsAdminService;
 
-    @GetMapping
-    public List<CommentDto> findAllComments(@PathVariable String comId, @PathVariable String eventId) {
-        log.info("controller. get. /admin/comments/{}/event/{}. find all comments", comId, eventId);
-        return commentsAdminService.findAllComments(comId, eventId);
+    @GetMapping("/event/{eventId}")
+    public List<CommentDto> findAllComments(@PathVariable Integer eventId) {
+        log.info("controller. get. /admin/comments/event/{}. find all comments", eventId);
+        return commentsAdminService.findAllComments(eventId);
     }
 
-    @PatchMapping
-    public CommentDto updateComment(@PathVariable String comId, @PathVariable String eventId,
+    @PatchMapping("/{comId}/event/{eventId}")
+    public CommentDto updateComment(@PathVariable Integer comId, @PathVariable Integer eventId,
                                     @RequestBody @Valid UpdateCommentRequestDto updateCommentRequestDto) {
         log.info("controller. patch. /admin/comments/{}/event/{}. patch comment = {}", comId, eventId, updateCommentRequestDto);
         return commentsAdminService.updateComment(comId, eventId, updateCommentRequestDto);
     }
 
-    @DeleteMapping
-    public void deleteComment(@PathVariable String comId, @PathVariable String eventId) {
+    @DeleteMapping("/{comId}/event/{eventId}")
+    public void deleteComment(@PathVariable Integer comId, @PathVariable Integer eventId) {
         log.info("controller. delete. /admin/comments/{}/event/{}. delete comment", comId, eventId);
         commentsAdminService.deleteComment(comId, eventId);
     }

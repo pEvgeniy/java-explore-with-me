@@ -7,10 +7,10 @@ import java.util.List;
 
 public interface CommentsAdminService {
 
-    List<CommentDto> findAllComments(String comId, String eventId);
+    List<CommentDto> findAllComments(Integer eventId);
 
-    CommentDto updateComment(String comId, String eventId, UpdateCommentRequestDto updateCommentRequestDto);
+    CommentDto updateComment(Integer comId, Integer eventId, UpdateCommentRequestDto updateCommentRequestDto);
 
-    void deleteComment(String comId, String eventId);
+    void deleteComment(Integer comId, Integer eventId);
 
 }
