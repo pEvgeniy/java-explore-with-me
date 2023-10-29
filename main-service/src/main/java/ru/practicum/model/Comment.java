@@ -19,6 +19,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -40,6 +41,7 @@ public class Comment {
     private User commentOwner;
 
     @NotBlank
+    @Size(max = 512)
     @Column(name = "text")
     private String text;
 
