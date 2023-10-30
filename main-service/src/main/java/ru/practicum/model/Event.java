@@ -18,6 +18,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -27,6 +28,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -100,6 +102,10 @@ public class Event {
     @NotBlank
     @Column(name = "title")
     private String title;
+
+    @NotNull
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
+    private List<Comment> comments;
 
     @PositiveOrZero
     @Transient

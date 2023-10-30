@@ -146,6 +146,7 @@ public class EventsPrivateServiceImpl implements EventsPrivateService {
         event.setCreatedOn(LocalDateTime.now());
         event.setConfirmedRequests(0);
         event.setState(EventFullDto.EventState.PENDING);
+        event.setComments(Collections.emptyList());
     }
 
     private Event updateEvent(Event event, UpdateEventUserRequestDto updateEvent) {
